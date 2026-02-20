@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Bot Dashboard</title>
+
+<style>
+body{
+  background:#0d1117;
+  color:#e6edf3;
+  font-family:system-ui;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+
+.panel{
+  background:#161b22;
+  padding:30px;
+  border-radius:12px;
+  width:420px;
+  box-shadow:0 0 30px #000;
+  animation:fade .5s;
+}
+
+input,textarea,button{
+  width:100%;
+  margin:8px 0;
+  padding:10px;
+  border-radius:8px;
+  border:none;
+  background:#21262d;
+  color:white;
+}
+
+button{
+  background:#238636;
+  cursor:pointer;
+}
+
+@keyframes fade{
+ from{opacity:0;transform:translateY(10px)}
+ to{opacity:1}
+}
+</style>
+</head>
+
+<body>
+
+<div class="panel">
+
+<h2>Telegram Bot Panel</h2>
+
+<input id="token" placeholder="Bot Token">
+<textarea id="script" placeholder="JS Script"></textarea>
+
+<button onclick="addBot()">ADD BOT</button>
+
+<div id="bots"></div>
+
+</div>
+
+<script>
+
+async function addBot(){
+  const token=document.getElementById("token").value;
+  const script=document.getElementById("script").value;
+
+  await fetch("/api/bot",{
+    method:"POST",
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({token,script})
+  });
+
+  loadBots();
+}
+
+async function loadBots(){
+  const res=await fetch("/api/bot");
+  const bots=await res.json();
+
+  document.getElementById("bots").innerHTML =
+    bots.map(b=>`<div>Bot ${b.id}</div>`).join("");
+}
+
+loadBots();
+
+</script>
+
+</body>
+</html>
